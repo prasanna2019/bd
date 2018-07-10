@@ -1,0 +1,6 @@
+This is a big data project that analyzes data of H1B applicants. 
+The H1B is an employment-based, non-immigrant visa category for temporary foreign workers in the United States. 
+For a foreign national to apply for H1B visa, an US employer must offer a job and petition for H1B visa with the US immigration department.
+This is the most common visa status applied for and held by international students once they complete college/ higher education (Masters, Ph.D.) and work in a full-time position. We will be performing analysis on the H1B visa applicants between the years 2011-2016.
+
+Technologies used for the analysis are: Hive, Pig and Mapreduce. 
