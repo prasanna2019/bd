@@ -1,0 +1,8 @@
+Which part of the US has the most Data Engineer jobs for each year?
+SELECT worksite,COUNT(job_title) as j FROM h1b_final WHERE job_title LIKE concat('%','DATA ENGINEER','%') AND year='2011' GROUP BY worksite ORDER BY j DESC LIMIT 1
+
+find top 5 locations in the US who have got certified visa for each year?
+SELECT worksite,COUNT(job_title) as j FROM h1b_final WHERE case_status='CERTIFIED' AND year='2011' GROUP BY worksite ORDER BY j DESC LIMIT 5
+
+Which industry has the most number of Data Scientist positions?
+SELECT soc_name,COUNT(job_title) as j FROM h1b_final WHERE (job_title LIKE concat('%','DATA SCIENTIST','%')) AND (case_status='CERTIFIED') GROUP BY soc_name ORDER BY j DESC LIMIT 1
