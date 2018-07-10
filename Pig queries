@@ -1,0 +1,67 @@
+Find the average Prevailing Wage for each Job for each Year (take part time and full time separate) arrange output in descending order
+h1b= load '/home/hduser/h1b_final' using PigStorage() as (s_no:int, case_status:chararray, employer_name:chararray, soc_name:chararray, job_title:chararray, full_time_position:chararray,prevailing_wage:int,year:chararray, worksite:chararray, longitute:double, latitute:double);
+b = filter h1b by year=='2011';
+c = foreach b generate $4, $5, $6, $7;
+d = group c by ($0, $1);
+e = foreach d generate group as job_title, COUNT(c),SUM(c.prevailing_wage);
+ f = foreach e generate $0, ($2/$1)as avg;
+g = order f by $0 desc;
+h = limit g 10;
+dump h;
+
+Which are employers who have the highest success rate in petitions more than 70% in petitions and total petions filed more than 1000?
+new = foreach h1b generate employer_name,case_status;
+filterbywithdrawn = filter new by case_status=='CERTIFIED-WITHDRAWN';
+filterbycertified = filter new by case_status=='CERTIFIED';
+
+newgroup = group new by employer_name;
+
+groupcertified = group filterbycertified by employer_name;
+groupwithdrawn = group filterbywithdrawn by employer_name;
+
+petitions = foreach newgroup generate group as employer,COUNT(new) as cnt;
+certifiedpetition= foreach groupcertified generate group as employer,COUNT(filterbycertified) as cnt;
+withdrawnpetition = foreach groupwithdrawn generate group as employer,COUNT(filterbywithdrawn) as cnt;
+
+joindata = join petitions by $0, certifiedpetition by $0, withdrawnpetition by $0;
+
+value1 = foreach joindata generate $0,$1,($3+$5);
+
+success = foreach value1 generate $0,$1,((double)$2*100/(double)$1) as success;
+
+filterbycondition = filter success by $1>=10000 and $2>70.0;
+
+orderdata = order filterbycondition by $2 desc;
+
+final =limit orderdata 10;
+
+dump final;
+Which are the job positions along with the number of petitions which have the
+success rate more than 70% in petitions (total petitions filed 1000 OR more than
+1000)? Display the values in descending order of success rate.
+new = foreach h1b generate $4,$1;
+filterbycertified = filter new by case_status=='CERTIFIED';
+filterbywithdrawn = filter new by case_status=='CERTIFIED-WITHDRAWN';
+
+newgroup = group new by job_title;
+groupcertified = group filterbycertified by job_title;
+groupwithdrawn = group filterbywithdrawn by job_title;
+
+petitions = foreach newgroup generate group as job_Position,COUNT(new) as cnt;
+
+certifiedpetition = foreach groupcertified generate group as job_Position,COUNT(filterbycertified ) as cnt;
+
+withdrawnpetition = foreach groupwithdrawn generate group as job_Position,COUNT(filterbywithdrawn) as cnt;
+
+joindata = join petitions by $0, certifiedpetition by $0, withdrawnpetition by $0;
+
+value1 = foreach joindata generate $0,$1,($3+$5);
+
+successrate = foreach value1 generate $0,$1,((double)$2*100/(double)$1) as success;
+result = filter successrate  by $1>=10000 and $2>70.0;
+
+orderdata = order result by $2 desc;
+
+result1 =limit orderdata 10;
+dump result1;
+
